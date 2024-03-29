@@ -24,6 +24,11 @@ func Response(w http.ResponseWriter, resp interface{}, err error) {
 		case LoginStatusExpired.Error():
 			body.Code = LoginStatusExpired.Code
 			body.Msg = LoginStatusExpired.Msg
+
+		case BadRequest.Error():
+			body.Code = BadRequest.Code
+			body.Msg = BadRequest.Msg
+			
 		default:
 			body.Code = InternalServerError.Code
 			body.Msg = InternalServerError.Msg
