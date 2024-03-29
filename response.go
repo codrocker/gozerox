@@ -7,7 +7,7 @@ import (
 )
 
 var Success = errors.CodeMsg{Code: 0, Msg: "ok"}
-
+var InternalServerError = errors.CodeMsg{Code: 500, Msg: "internal server error"}
 var LoginStatusExpired = errors.CodeMsg{Code: 2001, Msg: "auth status expired"}
 
 type Body struct {
@@ -23,17 +23,17 @@ func Response(w http.ResponseWriter, resp interface{}, err error) {
 		case LoginStatusExpired.Error():
 			body.Code = LoginStatusExpired.Code
 			body.Msg = LoginStatusExpired.Msg
-			httpx.OkJson(w, body)
-			return
 		default:
-			httpx.Error(w, err)
-			return
+			body.Code = InternalServerError.Code
+			body.Msg = InternalServerError.Msg
 		}
 	} else {
 		body.Code = Success.Code
 		body.Msg = Success.Msg
 		body.Data = resp
-		httpx.OkJson(w, body)
-		return
 	}
+
+	httpx.OkJson(w, body)
+	return
+
 }
