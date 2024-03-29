@@ -6,33 +6,32 @@ import (
 	"github.com/zeromicro/x/errors"
 )
 
+var Success = errors.CodeMsg{Code: 0, Msg: "ok"}
+
+var LoginStatusExpired = errors.CodeMsg{Code: 2001, Msg: "auth status expired"}
+
 type Body struct {
 	Code int         `json:"code"`
 	Msg  string      `json:"msg"`
 	Data interface{} `json:"data,omitempty"`
 }
 
-func Response(w http.ResponseWriter, resp interface{}, err interface{}) {
+func Response(w http.ResponseWriter, resp interface{}, err error) {
 	var body Body
 	if err != nil {
-		xerr, ok := err.(errors.CodeMsg)
-
-		if ok {
-			body.Code = xerr.Code
-			body.Msg = xerr.Msg
+		switch err.Error() {
+		case LoginStatusExpired.Error():
+			body.Code = LoginStatusExpired.Code
+			body.Msg = LoginStatusExpired.Msg
 			httpx.OkJson(w, body)
 			return
-		}
-
-		err, ok := err.(error)
-
-		if ok {
+		default:
 			httpx.Error(w, err)
 			return
 		}
 	} else {
-		body.Code = 0
-		body.Msg = "ok"
+		body.Code = Success.Code
+		body.Msg = Success.Msg
 		body.Data = resp
 		httpx.OkJson(w, body)
 		return
