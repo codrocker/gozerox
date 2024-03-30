@@ -7,9 +7,11 @@ import (
 )
 
 var Success = errors.CodeMsg{Code: 0, Msg: "ok"}
-var BadRequest = errors.CodeMsg{Code: 400, Msg: "bad request"}
-var InternalServerError = errors.CodeMsg{Code: 500, Msg: "internal server error"}
-var LoginStatusExpired = errors.CodeMsg{Code: 2001, Msg: "auth status expired"}
+var LoginStatusExpired = errors.CodeMsg{Code: 1001, Msg: "auth status expired"}
+
+var BadRequest = errors.CodeMsg{Code: 4001, Msg: "bad request"}
+
+var InternalServerError = errors.CodeMsg{Code: 5001, Msg: "internal server error"}
 
 type Body struct {
 	Code int         `json:"code"`
@@ -28,7 +30,7 @@ func Response(w http.ResponseWriter, resp interface{}, err error) {
 		case BadRequest.Error():
 			body.Code = BadRequest.Code
 			body.Msg = BadRequest.Msg
-			
+
 		default:
 			body.Code = InternalServerError.Code
 			body.Msg = InternalServerError.Msg
